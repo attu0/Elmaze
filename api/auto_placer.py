@@ -1,4 +1,5 @@
 from typing import List, Dict, Tuple
+import math
 
 Point = Tuple[float, float]
 
@@ -9,18 +10,6 @@ def auto_place_components(
     height: float,
     margin: float = 0.5
 ) -> Dict[str, Point]:
-    """
-    Automatically place components within PCB boundaries.
-
-    Args:
-        components: list of component names
-        width: PCB width (inches)
-        height: PCB height (inches)
-        margin: spacing from edges
-
-    Returns:
-        dict: {component_name: (x, y)}
-    """
 
     if width <= 2 * margin or height <= 2 * margin:
         raise ValueError("Board too small for given margin")
@@ -32,14 +21,22 @@ def auto_place_components(
     usable_height = height - 2 * margin
 
     n = len(components)
+
     positions = {}
 
-    # Horizontal distribution (simple + clean)
-    step_x = usable_width / max(n - 1, 1)
+    # Create grid (2 rows)
+    rows = 2
+    cols = math.ceil(n / rows)
+
+    step_x = usable_width / max(cols - 1, 1)
+    step_y = usable_height / max(rows - 1, 1)
 
     for i, comp in enumerate(components):
-        x = margin + i * step_x
-        y = margin + usable_height / 2  # center vertically
+        row = i % rows
+        col = i // rows
+
+        x = margin + col * step_x
+        y = margin + row * step_y
 
         positions[comp] = (round(x, 3), round(y, 3))
 
