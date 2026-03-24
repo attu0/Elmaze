@@ -1,45 +1,40 @@
 import { useState } from "react";
 
 function InputBox({ sendMessage }) {
-  const [text, setText] = useState("");
+  const [input, setInput] = useState("");
 
-  const handleSend = () => {
-    if (!text.trim()) return;
-    sendMessage(text);
-    setText("");
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(input);
+      setInput("");
+    }
   };
 
   return (
-    <div style={{
-      display: "flex",
-      padding: "10px",
-      background: "#020617",
-      borderTop: "1px solid #22c55e"
-    }}>
-      <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
+    <div style={{ display: "flex", width: "60%" }}>
+      <textarea
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={handleKeyDown}
         placeholder="Describe your PCB..."
         style={{
           flex: 1,
-          padding: "10px",
-          background: "#0f172a",
-          color: "white",
-          border: "1px solid #22c55e",
-          borderRadius: "8px"
+          padding: "12px",
+          borderRadius: "12px",
+          border: "1px solid #00f5ff",
+          background: "#020617",
+          color: "white"
         }}
       />
+
       <button
-        onClick={handleSend}
-        className="glow"
-        style={{
-          marginLeft: "10px",
-          padding: "10px 20px",
-          background: "#22c55e",
-          border: "none",
-          borderRadius: "8px",
-          cursor: "pointer"
+        onClick={() => {
+          sendMessage(input);
+          setInput("");
         }}
+        className="btn"
+        style={{ marginLeft: "10px" }}
       >
         Send
       </button>
